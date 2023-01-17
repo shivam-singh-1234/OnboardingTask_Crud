@@ -13,14 +13,15 @@ const createVoucher=async(body)=>{
             discount: body.discount,
             expire_date: expire_date,
             is_deleted:false,
+            is_reedem:false,
             logo:body.logo,
             icon:body.icon,
             created_at: new Date(),
             updated_at: new Date()
             };
-            console.log(data)
+    
         const result = await Voucher.query().insert(data);
-        console.log(result)
+   
         return result;
     }
     catch(error){
@@ -64,4 +65,37 @@ const deleteVoucher=async(id)=>{
     }
 }
 
-module.exports={createVoucher,getVoucher,updateVoucher,deleteVoucher};
+// !TODO reedem Voucher
+const reedemVoucher=async(voucherId,userId)=>{
+    try{
+        const data=await Voucher.query().findById(voucherId);
+     
+        if(!isExpired(data.expire_date)){
+            return "Voucher has been expired"
+        }
+        else if(data.is_reedem==1){
+            return "Voucher has been used"
+        }
+        else{
+         const data= Voucher.query().patchAndFetchById(voucherId,{
+            reedemUser: userId,
+             is_reedem: true
+           })            
+        return data
+        }
+    }
+    catch(error){
+        return error
+    }
+}
+
+
+const isExpired=async(expire_date)=>{
+    const current_date=new Date();
+    if(current_date>expire_date){
+        return true
+    }else{
+        return false    
+    }
+}
+module.exports={createVoucher,getVoucher,updateVoucher,deleteVoucher,reedemVoucher};

@@ -1,14 +1,15 @@
 const express=require('express');
 const router=express.Router();
 const knex=require("knex");
-const fs=require('fs');
+const jwt=require('jsonwebtoken');
 const Voucher=require('../Model/Voucher');
-
 const  {createVoucher,
         getVoucher,
         updateVoucher,
-        deleteVoucher}=require("../Controller/voucherController");
+        deleteVoucher,
+        reedemVoucher}=require("../Controller/voucherController");
 const multer = require("multer");
+const User = require('../Model/User');
 
 const storage = multer.diskStorage({
     destination:  function (req, file, cb) {
@@ -68,5 +69,25 @@ router.delete("/delete-voucher/:id",async(req,res)=>{
         return error
     }
 })
+
+
+router.patch("/reedem/:voucherId",async(req,res)=>{
+    try{
+        
+        const voucherId=req.params.voucherId;
+        const authHeader = req.headers.authorization;
+        let user;
+        if (authHeader) {
+            const token = authHeader.split(' ')[1];
+             user=jwt.verify(token,process.env.SECRET_KEY);
+          }
+        const response=await reedemVoucher(voucherId,user.id);
+        res.send(response);
+    }
+    catch(error){
+        res.send(error);
+    }
+})
+
 
 module.exports=router;
