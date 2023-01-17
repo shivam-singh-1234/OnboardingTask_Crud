@@ -3,18 +3,24 @@ const Voucher=require("../Model/Voucher")
 // !TODO create-voucher
 const createVoucher=async(body)=>{
     try{    
+
         let current_date = new Date();
         let addDay = current_date.setDate(current_date.getDate() + 5);
         const expire_date=new Date(addDay);
+       
         const data = {
             code: body.code,
             discount: body.discount,
             expire_date: expire_date,
             is_deleted:false,
+            logo:body.logo,
+            icon:body.icon,
             created_at: new Date(),
             updated_at: new Date()
             };
+            console.log(data)
         const result = await Voucher.query().insert(data);
+        console.log(result)
         return result;
     }
     catch(error){
@@ -58,4 +64,4 @@ const deleteVoucher=async(id)=>{
     }
 }
 
-module.exports={createVoucher,getVoucher,updateVoucher,deleteVoucher}
+module.exports={createVoucher,getVoucher,updateVoucher,deleteVoucher};

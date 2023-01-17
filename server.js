@@ -6,7 +6,7 @@ app.use(helmet());
 require("./DB/connection");
 app.use(express.json());
 const voucherRoutes=require("./Router/voucherRoutes");
-
+app.use('/uploads', express.static('./uploads'));
 
 app.use("/voucher",voucherRoutes);
 
@@ -17,5 +17,7 @@ app.listen(Port,()=>{
 })
 
 
+
+module.exports=app;
 
 
