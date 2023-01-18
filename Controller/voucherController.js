@@ -36,7 +36,6 @@ const getVoucher=async()=>{
 // !TODO update-voucher
 const updateVoucher=async(id,body)=>{
     try{
-        console.log("body",body);
         const data=await Voucher.query().patchAndFetchById(id,body);
         return data;
     }
@@ -48,8 +47,7 @@ const updateVoucher=async(id,body)=>{
 // !TODO delete-voucher
 const deleteVoucher=async(id)=>{
     try{
-        const data=await Voucher.query()
-        .patch({is_deleted:true}).findById(id);
+        const data=await Voucher.query().patchAndFetchById(id,{is_deleted:true});
         return data;
     }
     catch(error){
@@ -63,17 +61,18 @@ const reedemVoucher=async(voucherId,userId)=>{
         const data=await Voucher.query().findById(voucherId);
      
         if( await isExpired(data.expire_date)){
-            return "Voucher has been expired"
+            return {message:  "Voucher has been expired"}
+           
         }
         else if(data.is_reedem==1){
-            return "Voucher has been used"
+            return {message: "Voucher has been used"}
         }
         else{
-         const data= Voucher.query().patchAndFetchById(voucherId,{
+         let data= Voucher.query().patchAndFetchById(voucherId,{
             reedemUser: userId,
              is_reedem: true
-           })            
-        return data
+           })         
+            return data
         }
     }
     catch(error){

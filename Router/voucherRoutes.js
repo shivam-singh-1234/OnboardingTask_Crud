@@ -27,7 +27,10 @@ const upload = multer({ storage: storage });
 router.get("/get-voucher",async(req,res)=>{
     try{
         const response=await getVoucher();
-        res.send(response);
+        res.status(200).json({
+            message: 'Voucher get successfully',
+            data: response
+          });
     }
     catch(error){res.send(error)}
 })
@@ -47,7 +50,11 @@ router.post("/create-voucher",upload.fields([{ name: 'logo' }, { name: 'icon' }]
         }
             data={...data,...body};
         const response=await createVoucher(data);
-        res.send(response)
+        res.status(200).json({
+            message: 'Voucher created successfully',
+            data: response
+          });
+        
     }
     catch(error){res.send(error)}
 }
@@ -68,7 +75,10 @@ router.patch("/update-voucher/:id",upload.fields([{ name: 'logo' }, { name: 'ico
         }
         data={...data,...body};
         const response=await updateVoucher(id,data);
-        res.send(response);
+        res.status(200).json({
+            message: 'Voucher updated successfully',
+            data: response
+          });
     }
     catch(error){
         return error
@@ -80,7 +90,11 @@ router.delete("/delete-voucher/:id",async(req,res)=>{
     try{
         const id=req.params.id;
         const response=await deleteVoucher(id);
-        res.sendStatus(200);
+        res.status(200).json({
+            message: 'Voucher deleted successfully',
+            data: response
+          });
+        
     }
     catch(error){
         return error
@@ -90,7 +104,6 @@ router.delete("/delete-voucher/:id",async(req,res)=>{
 
 router.patch("/reedem/:voucherId",async(req,res)=>{
     try{
-        
         const voucherId=req.params.voucherId;
         const authHeader = req.headers.authorization;
         let user;
@@ -98,7 +111,10 @@ router.patch("/reedem/:voucherId",async(req,res)=>{
             const token = authHeader.split(' ')[1];
              user=jwt.verify(token,process.env.SECRET_KEY);
           }
-        const response=await reedemVoucher(voucherId,user.id);
+        let response=await reedemVoucher(voucherId,user.id);
+        if(!response.message){
+            response= {data:response,message:"voucher reedem successfully"}
+        }
         res.send(response);
     }
     catch(error){

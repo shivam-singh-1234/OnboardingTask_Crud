@@ -8,7 +8,7 @@ const jwt=require("jsonwebtoken");
 
 const getUser=async()=>{
 try{
-    const data=await User.query();
+    const data=await User.query().select('id', 'phone', 'name');
     return data
 }
 catch(error){
@@ -20,7 +20,6 @@ const createUser=async(body)=>{
     try{
         const checkUserExist=await User.query().findOne({phone:body.phone});
         if(checkUserExist){return "user Already Exist"}
-
         let salt=await bcrypt.genSalt(10);
         let password=await bcrypt.hash(body.password,salt);
        const data={
@@ -45,7 +44,8 @@ const createUser=async(body)=>{
 
 const updateUser=async(id,body)=>{
     try{
-        const data=await User.query().patchAndFetchById(id,body);
+        let data=await User.query().patchAndFetchById(id,body);
+        let result ={password,token,...data}=data;
         return data;
     }
     catch(error){

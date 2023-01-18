@@ -5,7 +5,10 @@ const {getUser,createUser,updateUser}=require("../Controller/userController");
 router.get("/",async(req,res)=>{
     try{
         const response=await getUser();
-        res.send(response);
+        res.status(200).json({
+            message: 'User get successfully',
+            data: response
+          });
     }
     catch(error){
         res.send(error)
@@ -15,7 +18,11 @@ router.get("/",async(req,res)=>{
 router.post("/",async(req,res)=>{
     try{
         const response=await createUser(req.body);
-        res.send(response);
+        res.status(200).json({
+            message: 'User created successfully',
+            data: response
+          });
+       
     }
     catch(error){
         res.send(error)
@@ -25,7 +32,11 @@ router.post("/",async(req,res)=>{
 router.patch("/:id",async(req,res)=>{
     try{
         const response=await updateUser(req.params.id,req.body);
-        res.send(response);
+        res.status(200).json({
+            message: 'User updated successfully',
+            data: response
+          });
+        
     }
     catch(error){
         res.send(error);
