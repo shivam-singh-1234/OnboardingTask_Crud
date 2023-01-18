@@ -3,25 +3,18 @@ const Voucher=require("../Model/Voucher")
 // !TODO create-voucher
 const createVoucher=async(body)=>{
     try{    
-
         let current_date = new Date();
         let addDay = current_date.setDate(current_date.getDate() + 5);
         const expire_date=new Date(addDay);
-       
-        const data = {
-            code: body.code,
-            discount: body.discount,
+        let createData = {
             expire_date: expire_date,
             is_deleted:false,
             is_reedem:false,
-            logo:body.logo,
-            icon:body.icon,
             created_at: new Date(),
             updated_at: new Date()
             };
-    
+        let data={...body,...createData};
         const result = await Voucher.query().insert(data);
-   
         return result;
     }
     catch(error){
@@ -43,9 +36,8 @@ const getVoucher=async()=>{
 // !TODO update-voucher
 const updateVoucher=async(id,body)=>{
     try{
-        const data=await Voucher.query()
-        .findById(id)
-        .patch(body);
+        console.log("body",body);
+        const data=await Voucher.query().patchAndFetchById(id,body);
         return data;
     }
     catch(error){
@@ -70,7 +62,7 @@ const reedemVoucher=async(voucherId,userId)=>{
     try{
         const data=await Voucher.query().findById(voucherId);
      
-        if(!isExpired(data.expire_date)){
+        if( await isExpired(data.expire_date)){
             return "Voucher has been expired"
         }
         else if(data.is_reedem==1){
@@ -93,6 +85,7 @@ const reedemVoucher=async(voucherId,userId)=>{
 const isExpired=async(expire_date)=>{
     const current_date=new Date();
     if(current_date>expire_date){
+        console.log("expired")
         return true
     }else{
         return false    

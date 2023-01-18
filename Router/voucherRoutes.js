@@ -35,10 +35,17 @@ router.get("/get-voucher",async(req,res)=>{
 
 router.post("/create-voucher",upload.fields([{ name: 'logo' }, { name: 'icon' }]),async(req,res)=>{
     try{
-        let host = req.hostname;
-        const logoFilePath = `${req.protocol}://${req.headers.host}/${req.files.logo[0].path}`;
-        const iconFilePath = `${req.protocol}://${req.headers.host}/${req.files.icon[0].path}`;
-        let data={code:req.body.code,discount:req.body.discount,icon:iconFilePath,logo:logoFilePath};
+        let body = JSON.parse(JSON.stringify(req.body)); 
+        let data={};
+        if("logo" in req.files){
+            let logo= `${req.protocol}://${req.headers.host}/${req.files.logo[0].path}`;
+            data={...data,logo};
+        }
+        if("icon" in req.files){
+            let  icon = `${req.protocol}://${req.headers.host}/${req.files.icon[0].path}`;
+            data={...data,icon};
+        }
+            data={...data,...body};
         const response=await createVoucher(data);
         res.send(response)
     }
@@ -46,12 +53,22 @@ router.post("/create-voucher",upload.fields([{ name: 'logo' }, { name: 'icon' }]
 }
 )
 
-router.patch("/update-voucher/:id",async(req,res)=>{
+router.patch("/update-voucher/:id",upload.fields([{ name: 'logo' }, { name: 'icon' }]),async(req,res)=>{
     try{
         const id=req.params.id;
-        const body=req.body;
-        const response=await updateVoucher(id,body);
-        res.sendStatus(200);
+        let body = JSON.parse(JSON.stringify(req.body)); 
+        let data={};
+        if("logo" in req.files){
+            let logo= `${req.protocol}://${req.headers.host}/${req.files.logo[0].path}`;
+            data={...data,logo};
+        }
+        if("icon" in req.files){
+            let  icon = `${req.protocol}://${req.headers.host}/${req.files.icon[0].path}`;
+            data={...data,icon};
+        }
+        data={...data,...body};
+        const response=await updateVoucher(id,data);
+        res.send(response);
     }
     catch(error){
         return error

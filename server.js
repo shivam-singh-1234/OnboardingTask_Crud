@@ -4,6 +4,7 @@ require("dotenv").config();
 const app = express();
 app.use(helmet());
 require("./DB/connection");
+app.use(express.urlencoded({ extended : true }));
 app.use(express.json());
 const voucherRoutes=require("./Router/voucherRoutes");
 const userRoutes=require("./Router/userRoutes");
