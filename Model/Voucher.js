@@ -10,5 +10,4 @@ static get tableName() {
 	return 'vouchers';
 }
 }
-
 module.exports = Voucher;

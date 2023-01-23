@@ -28,6 +28,7 @@ exports.up = function(knex) {
           
     .createTable('vouchers', (table) => {
             table.increments('id');
+            table.string('voucherName')
             table.string('code', 255).notNullable();
             table.integer('discount');
             table.string('logo');

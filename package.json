@@ -28,8 +28,7 @@
     "mysql2": "^3.0.1",
     "nodemon": "^2.0.20",
     "objection": "^3.0.1",
-    "pg": "^8.8.0",
-    "sqlite3": "^5.1.4",
+    "perf_hooks": "0.0.1",
     "supertest": "^6.3.3"
   }
 }

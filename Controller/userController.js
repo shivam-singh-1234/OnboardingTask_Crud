@@ -1,10 +1,6 @@
-
 const User=require("../Model/User");
 const bcrypt = require("bcrypt");
 const jwt=require("jsonwebtoken");
-
-
-
 
 const getUser=async()=>{
 try{
@@ -44,9 +40,28 @@ const createUser=async(body)=>{
 
 const updateUser=async(id,body)=>{
     try{
+        const{password}=body;
+        if(password){
+            let salt=await bcrypt.genSalt(10);
+            let password=await bcrypt.hash(body.password,salt);
+            body={...body,password};
+        }       
         let data=await User.query().patchAndFetchById(id,body);
-        let result ={password,token,...data}=data;
+        delete data.password;
+        delete data.token;
         return data;
+    }
+    catch(error){
+        return error
+    }
+}
+
+const deleteUser=async(id)=>{
+    try{
+        let data=await User.query().patchAndFetchById(id,{
+            is_Deleted:true
+           })         
+            return data
     }
     catch(error){
         return error
@@ -67,4 +82,4 @@ const updateUser=async(id,body)=>{
 
 
 
-module.exports={getUser,createUser,updateUser};
+module.exports={getUser,createUser,updateUser,deleteUser};

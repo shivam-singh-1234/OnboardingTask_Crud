@@ -1,5 +1,5 @@
 const Voucher=require("../Model/Voucher")
-
+const { performance } = require('perf_hooks');
 // !TODO create-voucher
 const createVoucher=async(body)=>{
     try{    
@@ -25,7 +25,10 @@ const createVoucher=async(body)=>{
 // !TODO get-voucher
 const getVoucher=async()=>{
     try{
-        const data = await Voucher.query();
+        var startTime = performance.now()
+        const data = await Voucher.query().where('is_Deleted',false);
+        var endTime = performance.now()
+        console.log(`api call time is ${endTime-startTime} milliseconds`)
         return data;
     }
     catch(error){
